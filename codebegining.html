@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Код - набирай и смотри! ✨</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #06103c 0%, #133e0e 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 15px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .timer {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 12px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      backdrop-filter: blur(10px);
+    }
+
+    .editor-container {
+      display: grid;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .code-editor,
+    .preview {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      min-height: 200px;
+    }
+
+    .editor-header,
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+
+    .code-type {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: #040312;
+      color: #d4d4d4;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      resize: none;
+      line-height: 1.4;
+    }
+
+    .preview-area {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      min-height: 150px;
+      color: #333;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .btn-run {
+      background: #4c90af;
+    }
+
+    .btn-reset {
+      background: #d48f19;
+    }
+
+    .examples {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 15px;
+        }
+        
+        .example-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .example-btn {
+            padding: 10px;
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .step-number {
+            background: #FF6B6B;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 480px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .example-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    </head>
+    
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🚀 Код за 5 минут!</h1>
+          <p class="subtitle">Пиши код на телефоне и сразу смотри результат</p>
+        </div>
+    
+        <div class="timer">⏱️ Осталось: <span id="time">5:00</span></div>
+    
+        <div class="editor-container">
+          <div class="code-editor">
+            <div class="editor-header">
+              <span>📝 Твой код (HTML)</span>
+              <span class="code-type">HTML</span>
+            </div>
+            <textarea id="htmlCode" placeholder="Введи HTML код здесь...">&lt;div class="custom-box"&gt;
+        Привет! ✨
+    &lt;/div&gt;
+    &lt;p class="custom-text"&gt;
+        Я создал это за 5 минут!
+    &lt;/p&gt;</textarea>
+          </div>
+    
+          <div class="code-editor">
+            <div class="editor-header">
+              <span>🎨 Твой код (CSS)</span>
+              <span class="code-type">CSS</span>
+            </div>
+            <textarea id="cssCode" placeholder="Введи CSS код здесь...">.custom-box {
+        width: 120px;
+        height: 120px;
+        background: #FF6B6B;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        margin: 10px auto;
+        transform: rotate(5deg);
+    }
+    
+    .custom-text {
+        color: #4ECDC4;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin: 15px 0;
+    }</textarea>
+          </div>
+        </div>
+    
+        <div class="controls">
+          <button class="btn-run" onclick="runCode()">▶️ Запустить код</button>
+          <button class="btn-reset" onclick="resetCode()">🔄 Сбросить</button>
+        </div>
+    
+        <div class="preview">
+          <div class="preview-header">
+            <span>👀 Результат:</span>
+            <span class="code-type">Preview</span>
+          </div>
+          <div class="preview-area" id="preview">
+            <!-- Сюда вставляется результат -->
+          </div>
+        </div>
+    
+        <div class="examples">
+          <div class="editor-header">
+            <span>🎯 Быстрые примеры:</span>
+          </div>
+          <div class="example-buttons">
+            <button class="example-btn" onclick="loadExample(1)">Анимированный блок</button>
+            <button class="example-btn" onclick="loadExample(2)">Цветной текст</button>
+            <button class="example-btn" onclick="loadExample(3)">Градиент</button>
+            <button class="example-btn" onclick="loadExample(4)">Тень</button>
+            </div>
+            </div>
+            
+            <div class="instructions">
+              <div class="step">
+                <div class="step-number">1</div>
+                <div>Напиши HTML код в первом поле (структура)</div>
+              </div>
+              <div class="step">
+                <div class="step-number">2</div>
+                <div>Добавь CSS стили во втором поле (внешний вид)</div>
+              </div>
+              <div class="step">
+                <div class="step-number">3</div>
+                <div>Нажми "Запустить код" чтобы увидеть результат!</div>
+              </div>
+              <div class="step">
+                <div class="step-number">💡</div>
+                <div>Используй примеры для вдохновения и экспериментируй!</div>
+              </div>
+            </div>
+            </div>
+            
+            <script>
+              // Элементы DOM
+              const htmlCode = document.getElementById('htmlCode');
+              const cssCode = document.getElementById('cssCode');
+              const preview = document.getElementById('preview');
+              const timeDisplay = document.getElementById('time');
+
+              // Таймер
+              let timeLeft = 300; // 5 минут
+
+              function updateTimer() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timeDisplay.textContent = `${ minutes }: ${ seconds.toString().padStart(2, '0') }`;
+
+                if (timeLeft > 0) {
+                  timeLeft--;
+                  setTimeout(updateTimer, 1000);
+                } else {
+                  timeDisplay.textContent = "Время вышло! 🎉";
+                  timeDisplay.style.color = "#4CAF50";
+                }
+              }
+
+              // Запуск кода
+              function runCode() {
+                try {
+                  const html = htmlCode.value;
+                  const css = cssCode.value;
+
+                  // Создаем стили
+                  const style = document.createElement('style');
+                  style.textContent = css;
+
+                  // Очищаем превью и добавляем новый контент
+                  preview.innerHTML = '';
+                  preview.appendChild(style);
+                  preview.innerHTML += html;
+
+                } catch (error) {
+                  preview.innerHTML =`
+                    <div style="color: red; padding: 20px; text-align: center;">
+                      <h3>Ошибка в коде! 😅</h3>
+                      <p>Проверь правильность написания</p>
+                      <small>${error.message}</small>
+                    </div>
+                    `;
+                }
+
+                // Вибрация для подтверждения
+                // if (navigator.vibrate) {
+                //   navigator.vibrate(100);
+                // }
+              }
+
+              // Сброс кода
+              function resetCode() {
+                htmlCode.value = `<div class="custom-box">
+                  Привет! ✨
+            </div>
+            <p class="custom-text">
+                    Я создал это за 5 минут!
+            </p>`;
+                cssCode.value = `.custom - box {
+                  width: 120px;
+                  height: 120px;
+                  background: #FF6B6B;
+                  border - radius: 15px;
+                  display: flex;
+                  align - items: center;
+                  justify - content: center;
+                  color: white;
+                  font - weight: bold;
+                  margin: 10px auto;
+                  transform: rotate(5deg);
+                }
+            
+            .custom - text {
+                  color: #4ECDC4;
+                  font - size: 18px;
+                  font - weight: bold;
+                  text - align: center;
+                  margin: 15px 0;
+                }`;
+                runCode();
+              }
+
+              // Примеры кода
+              function loadExample(exampleNum) {
+                switch (exampleNum) {
+                  case 1:
+                    htmlCode.value = `<div class="animated-box">
+                      Анимация! 🎪
+            </div>`;
+                    cssCode.value = `.animated-box {
+                      width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    animation: bounce 2s infinite;
+    margin: 20px auto;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(5deg); }
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(-10px) rotate(-5deg); }
+}`;
+                    break;
+                    
+                case 2:
+                    htmlCode.value = `<h1 class="gradient-text">
+    Разноцветный текст! 🌈
+</h1>
+<p class="glowing-text">
+    Этот текст светится!
+</p>`;
+                    cssCode.value = `.gradient-text {
+    background: linear-gradient(45deg, #FF6B6B, #4ECDC4, #45B7D1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    font-size: 24px;
+    margin: 20px 0;
+}
+
+.glowing-text {
+    color: #FFD93D;
+    text-align: center;
+    font-size: 18px;
+    text-shadow: 0 0 10px #FF6B6B;
+    font-weight: bold;
+    margin: 15px 0;
+}`;
+                    break;
+                    
+                case 3:
+                    htmlCode.value = `<div class="gradient-box">
+    Красивый градиент! 🎨
+</div>`;
+                    cssCode.value = `.gradient-box {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin: 20px auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.gradient-box:hover {
+    transform: scale(1.1);
+}`;
+                    break;
+                    
+                case 4:
+                    htmlCode.value = `<div class="shadow-card">
+    <h3>Карточка с тенью</h3>
+    <p>Крутая 3D тень!</p>
+</div>`;
+                    cssCode.value = `.shadow-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 
+        0 10px 20px rgba(0,0,0,0.1),
+        0 6px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    margin: 20px auto;
+    max-width: 200px;
+    transition: transform 0.3s ease;
+}
+
+.shadow-card:hover {
+    transform: translateY(-5px);
+}
+
+.shadow-card h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.shadow-card p {
+    color: #666;
+    margin: 0;
+}`;
+                    break;
+            }
+            runCode();
+        }
+        
+        // Автозапуск при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            runCode();
+            updateTimer();
+            
+            // Оптимизация для мобильного ввода
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                textarea.addEventListener('focus', function() {
+                    this.style.fontSize = '16px'; // Убираем zoom на iOS
+                });
+            });
+        });
+        
+        // Сохранение в localStorage
+        function saveCode() {
+            localStorage.setItem('htmlCode', htmlCode.value);
+            localStorage.setItem('cssCode', cssCode.value);
+        }
+        
+        function loadCode() {
+            const savedHtml = localStorage.getItem('htmlCode');
+            const savedCss = localStorage.getItem('cssCode');
+            
+            if (savedHtml) htmlCode.value = savedHtml;
+            if (savedCss) cssCode.value = savedCss;
+        }
+        
+        // Автосохранение
+        htmlCode.addEventListener('input', saveCode);
+        cssCode.addEventListener('input', saveCode);
+        
+        // Загрузка сохраненного кода
+        loadCode();
+                      </script>
+    </body>
+    
+    </html>
